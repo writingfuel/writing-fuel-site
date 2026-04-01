@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Writing Fuel — Read more. Write better.</title>
+<meta name="description" content="Ray Bradbury read one poem, one story, and one article every morning. He wrote 600+ works. We deliver his exact reading practice to your inbox — free."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Special+Elite&display=swap" rel="stylesheet"/>
+<script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --paper:#F5F0E8; --paper-warm:#EDE6D6; --cream:#FAF7F0;
+  --amber:#BA7517; --amber-d:#8B5210; --amber-l:#D4A853;
+  --sage:#6B8A4E;  --sage-l:#8FAF6A;
+  --terra:#C4622D;
+  --ink:#2C2416;   --ink-m:#4A3520;   --ink-l:#7A5C35;
+  --rule:rgba(186,117,23,.16); --sh:rgba(44,36,22,.18);
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'Lora',Georgia,serif;
+  --fm:'Special Elite','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--fb);font-size:18px;line-height:1.75;overflow-x:hidden}
+
+#grain{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;width:100%;z-index:500;
+  padding:16px 52px;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:background .3s,box-shadow .3s;
+}
+nav.scrolled{
+  background:rgba(245,240,232,.96);
+  backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 var(--rule),0 4px 24px rgba(44,36,22,.06);
+}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.nav-logo img{width:36px;height:36px;object-fit:contain;display:block}
+.nav-wordmark{font-family:var(--fd);font-size:22px;font-weight:600;letter-spacing:.02em;line-height:1}
+.nav-r{display:flex;align-items:center;gap:32px}
+.nav-link{font-family:var(--fm);font-size:14px;letter-spacing:.07em;color:var(--ink-l);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--amber)}
+.nav-cta{font-family:var(--fm);font-size:14px;letter-spacing:.09em;color:var(--amber);text-decoration:none;border:1px solid var(--amber);padding:10px 26px;transition:all .2s}
+.nav-cta:hover{background:var(--amber);color:var(--paper)}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:52% 48%;
+  align-items:center;
+  padding:130px 52px 80px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(to bottom,transparent,transparent 38px,var(--rule) 38px,var(--rule) 39px);
+}
+.hero::after{
+  content:'';position:absolute;top:0;bottom:0;left:100px;
+  width:1px;background:rgba(186,117,23,.1);pointer-events:none;
+}
+
+.hero-l{position:relative;z-index:2;padding-right:40px}
+
+.eyebrow{
+  font-family:var(--fm);font-size:13px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--amber);
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:32px;
+  opacity:0;transform:translateY(14px);
+}
+.eyebrow::before{content:'';width:28px;height:1px;background:var(--amber);flex-shrink:0}
+
+/* Hero title: two explicit lines, each animated as a block — no word spans, no layout surprises */
+.hero-title{
+  font-family:var(--fd);
+  font-size:clamp(3rem,4.6vw,5.2rem);
+  font-weight:500;line-height:1.13;letter-spacing:-.01em;
+  color:var(--ink);margin-bottom:28px;
+}
+.ht-line{display:block;opacity:0;transform:translateY(20px)}
+.hero-title em{font-style:italic;color:var(--amber)}
+
+.hero-proof{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;
+  opacity:0;transform:translateY(14px);
+}
+.proof-bar-line{width:24px;height:1px;background:var(--ink-l);flex-shrink:0}
+.proof-text{
+  font-family:var(--fm);font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-l);
+}
+.proof-text em{color:var(--amber);font-style:normal}
+
+.hero-desc{
+  font-size:1.12rem;color:var(--ink-m);line-height:1.85;
+  max-width:460px;margin-bottom:32px;
+  opacity:0;transform:translateY(14px);
+}
+.hero-desc strong{color:var(--ink);font-weight:500}
+
+/* Verdict panels */
+.hero-verdict{
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid rgba(186,117,23,.25);
+  margin-bottom:36px;
+  opacity:0;transform:translateY(14px);
+}
+.vhalf{padding:18px 22px}
+.vhalf.bad{background:rgba(196,98,45,.07);border-right:1px solid rgba(186,117,23,.2)}
+.vhalf.good{background:rgba(186,117,23,.09)}
+.vlabel{
+  font-family:var(--fm);font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;display:block;margin-bottom:7px;
+}
+.vlabel.bad{color:var(--terra)}
+.vlabel.good{color:var(--amber)}
+.vval{font-family:var(--fd);font-size:1.18rem;font-weight:500;color:var(--ink);line-height:1.4}
+.vval.good{color:var(--amber)}
+
+.hero-btns{
+  display:flex;gap:14px;flex-wrap:wrap;
+  margin-bottom:36px;
+  opacity:0;transform:translateY(14px);
+}
+.btn-dark{
+  font-family:var(--fm);font-size:15px;letter-spacing:.1em;
+  background:var(--ink);color:var(--paper);border:none;
+  padding:18px 40px;text-decoration:none;display:inline-block;
+  transition:all .22s;
+}
+.btn-dark:hover{background:var(--amber-d);transform:translateY(-2px);box-shadow:0 8px 24px var(--sh)}
+.btn-out{
+  font-family:var(--fm);font-size:15px;letter-spacing:.1em;
+  background:transparent;color:var(--amber);
+  border:1.5px solid var(--amber);
+  padding:18px 40px;text-decoration:none;display:inline-block;
+  transition:all .22s;
+}
+.btn-out:hover{background:var(--amber);color:var(--paper)}
+
+.tagline{opacity:0;transform:translateY(10px)}
+.tagline-inner{
+  font-family:var(--fd);font-size:1.35rem;font-style:italic;
+  color:var(--ink-l);position:relative;display:inline-block;
+}
+.tagline-svg{
+  position:absolute;bottom:-7px;left:0;width:100%;overflow:visible;
+  stroke-dasharray:260;stroke-dashoffset:260;
+  transition:stroke-dashoffset 1.2s ease .2s;
+}
+.tagline-svg.drawn{stroke-dashoffset:0}
+
+/* ─── HERO CARD ─── */
+.hero-r{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+  opacity:0;transform:translateY(20px);
+}
+.card-scene{position:relative;width:420px}
+.card-shadow{
+  position:absolute;inset:0;
+  background:var(--paper-warm);
+  border:1px solid rgba(186,117,23,.18);
+  transform:rotate(2.4deg);
+  box-shadow:8px 12px 28px var(--sh);
+  z-index:1;
+}
+.issue-card{
+  background:var(--cream);
+  border:1px solid rgba(186,117,23,.32);
+  box-shadow:14px 20px 52px rgba(44,36,22,.24),0 2px 0 rgba(186,117,23,.12);
+  padding:34px 38px;
+  transform:rotate(-3.5deg);
+  position:relative;z-index:3;
+  animation:float 5.5s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:rotate(-3.5deg) translateY(0)}
+  50%{transform:rotate(-3.5deg) translateY(-12px)}
+}
+.card-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:14px;margin-bottom:14px;
+  border-bottom:1px solid var(--rule);
+}
+.card-brand{font-family:var(--fd);font-size:1.12rem;font-weight:600;color:var(--ink)}
+.card-meta{font-family:var(--fm);font-size:10px;letter-spacing:.18em;color:var(--amber);text-align:right;line-height:1.65}
+.card-row{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px dashed rgba(186,117,23,.2);
+}
+.card-row:last-child{border-bottom:none}
+.cr-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.cr-dot.a{background:var(--amber)}.cr-dot.s{background:var(--sage)}.cr-dot.t{background:var(--terra)}
+.cr-tag{font-family:var(--fm);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-l);min-width:56px;padding-top:3px}
+.cr-t{font-family:var(--fd);font-size:1.1rem;font-weight:500;color:var(--ink);line-height:1.3}
+.cr-m{font-family:var(--fm);font-size:10px;letter-spacing:.06em;color:var(--ink-l);margin-top:3px}
+
+.doodle{position:absolute;pointer-events:none;opacity:0}
+.d-coffee{top:-26px;right:-20px;z-index:5}
+.d-quill{bottom:-48px;left:-34px;z-index:2}
+.d-dots{top:26px;left:-52px;z-index:2}
+.d-arrow{top:-68px;left:22px;z-index:5}
+
+/* ─── MARQUEE ─── */
+.marquee-band{
+  background:var(--ink);overflow:hidden;
+  padding:14px 0;
+  border-top:1px solid rgba(186,117,23,.2);
+  border-bottom:1px solid rgba(186,117,23,.2);
+}
+.marquee-track{display:flex;white-space:nowrap;animation:marquee 32s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mi{font-family:var(--fm);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.52);padding:0 22px;flex-shrink:0}
+.ms{flex-shrink:0;align-self:center;font-size:13px}
+.ms.a{color:var(--amber)}.ms.s{color:var(--sage-l)}.ms.t{color:#E8875A}
+
+/* ─── PROOF BAR ─── */
+.proof-bar{background:var(--amber);display:grid;grid-template-columns:repeat(4,1fr)}
+.pb-cell{padding:28px 16px;text-align:center;border-right:1px solid rgba(245,240,232,.2)}
+.pb-cell:last-child{border-right:none}
+.pb-n{font-family:var(--fd);font-size:3.4rem;font-weight:300;color:var(--paper);line-height:1}
+.pb-l{font-family:var(--fm);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.65);margin-top:7px}
+
+/* ─── SHARED ─── */
+.wrap{max-width:1080px;margin:0 auto;padding:88px 52px}
+.chip{
+  font-family:var(--fm);font-size:12px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--amber);
+  display:inline-block;margin-bottom:14px;
+}
+.reveal{opacity:0;transform:translateY(26px)}
+
+/*
+  Section header pattern used everywhere:
+  .sec-head — always centered, stacked: chip → h2 → subtext
+  No flex-split, no text on opposite sides. Fixed, predictable.
+*/
+.sec-head{text-align:center;margin-bottom:56px}
+.sec-head h2{
+  font-family:var(--fd);
+  font-size:clamp(2.4rem,4.2vw,4.2rem);
+  font-weight:500;line-height:1.12;
+  margin-bottom:16px;
+}
+.sec-head p{
+  font-size:1.07rem;font-style:italic;color:var(--ink-l);
+  max-width:520px;margin:0 auto;line-height:1.75;
+}
+
+/* ─── PALETTE STRIP ─── */
+.palette-strip{background:var(--ink);padding:24px 52px}
+.palette-in{
+  max-width:1080px;margin:0 auto;
+  display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;
+}
+.swatch{display:flex;align-items:center;gap:10px}
+.sw-dot{width:26px;height:26px;border-radius:50%}
+.sw-label{font-family:var(--fm);font-size:13px;letter-spacing:.12em;color:rgba(245,240,232,.5);text-transform:uppercase}
+.palette-sep{font-family:var(--fd);font-size:1.1rem;font-style:italic;color:rgba(245,240,232,.22)}
+
+/* ─── FOR WRITERS WHO ─── */
+.fww{background:var(--paper-warm);padding:88px 52px}
+.fww-in{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.fww-left h2{font-family:var(--fd);font-size:clamp(2.2rem,3.8vw,3.8rem);font-weight:500;line-height:1.15;margin-bottom:18px}
+.fww-left h2 em{font-style:italic;color:var(--amber)}
+.fww-left p{font-size:1.07rem;color:var(--ink-m);line-height:1.82;margin-bottom:20px}
+.fww-left p strong{color:var(--ink);font-weight:500}
+.fww-not{margin-top:24px;padding:18px 22px;border-left:3px solid var(--terra);background:rgba(196,98,45,.07)}
+.fww-not p{font-family:var(--fm);font-size:13px;letter-spacing:.06em;color:var(--terra);line-height:1.75}
+.fww-right{padding-top:4px}
+.fww-item{display:flex;align-items:flex-start;gap:18px;padding:20px 0;border-bottom:1px solid var(--rule)}
+.fww-item:first-child{border-top:1px solid var(--rule)}
+.fww-check{width:22px;height:22px;border:1.5px solid var(--amber);border-radius:50%;flex-shrink:0;margin-top:4px;display:flex;align-items:center;justify-content:center}
+.fww-item-t{font-family:var(--fd);font-size:1.28rem;font-weight:500;color:var(--ink);line-height:1.3;margin-bottom:4px}
+.fww-item-d{font-size:1rem;color:var(--ink-l);line-height:1.65}
+
+/* ─── METHOD ─── */
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid rgba(186,117,23,.28)}
+.mc{padding:48px 36px;position:relative;border-right:1px solid rgba(186,117,23,.18);transition:background .28s}
+.mc:last-child{border-right:none}
+.mc:hover{background:var(--cream)}
+.mc-num{font-family:var(--fd);font-size:7rem;font-weight:300;color:var(--amber);opacity:.09;position:absolute;top:6px;right:12px;line-height:1;user-select:none}
+.mc-icon{margin-bottom:20px;display:block}
+.mc-pill{display:inline-block;height:6px;border-radius:3px;margin-bottom:18px}
+.mc h3{font-family:var(--fd);font-size:2.2rem;font-weight:600;margin-bottom:8px;line-height:1.12}
+.mc-outcome{font-family:var(--fm);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px;display:block}
+.mc p{font-size:1.02rem;color:var(--ink-m);line-height:1.78}
+.mc-time{margin-top:20px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fm);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.tc{height:3px;opacity:.3}
+
+/* ─── DARK BAND ─── */
+.dark{background:var(--ink);padding:88px 52px}
+.dark-in{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.dark .chip{color:var(--amber)}
+.dq{font-family:var(--fd);font-size:clamp(1.9rem,2.8vw,2.8rem);font-style:italic;font-weight:400;color:var(--paper);line-height:1.4;margin-bottom:18px}
+.dqa{font-family:var(--fm);font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+.rvis{margin-top:44px}
+.rvis-label{font-family:var(--fm);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:20px}
+.rrow{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.rlbl{font-family:var(--fm);font-size:13px;letter-spacing:.12em;text-transform:uppercase;min-width:96px}
+.rlbl.a{color:var(--amber-l)}.rlbl.s{color:var(--sage-l)}.rlbl.t{color:#E8875A}
+.rtrack{flex:1;height:6px;background:rgba(255,255,255,.08)}
+.rbar{height:100%;width:0%;transition:width 1.2s ease}
+.rbar.a{background:var(--amber)}.rbar.s{background:var(--sage)}.rbar.t{background:var(--terra)}
+.rdur{font-family:var(--fm);font-size:13px;color:rgba(245,240,232,.38);min-width:56px;text-align:right}
+.dark-r p{font-size:1.07rem;color:rgba(245,240,232,.68);line-height:1.86;margin-bottom:22px}
+.dark-r p strong{color:var(--amber-l);font-weight:500}
+.how{margin-top:36px;border:1px solid rgba(186,117,23,.22);padding:28px 30px}
+.how-step{display:flex;align-items:center;gap:16px}
+.hs-n{font-family:var(--fd);font-size:1.8rem;font-weight:300;color:var(--amber);min-width:24px}
+.hs-t{font-size:1.02rem;color:rgba(245,240,232,.68)}
+.hs-t em{font-style:italic;color:rgba(245,240,232,.38)}
+.how-div{width:1px;height:14px;background:rgba(186,117,23,.28);margin-left:11px}
+
+/* ─── SAMPLE ─── */
+.sample{background:var(--paper);padding:88px 52px}
+.sample-in{max-width:1080px;margin:0 auto}
+.notebook{background:var(--cream);border:1px solid rgba(186,117,23,.24);box-shadow:8px 10px 40px var(--sh);position:relative}
+.notebook::before{content:'';position:absolute;top:0;bottom:0;left:52px;width:1px;background:rgba(186,117,23,.2)}
+.nb-head{background:var(--amber);padding:18px 28px 18px 72px;display:flex;justify-content:space-between;align-items:center}
+.nb-head-t{font-family:var(--fd);font-size:1.15rem;font-weight:600;color:var(--paper)}
+.nb-head-d{font-family:var(--fm);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.72)}
+.nb-row{
+  display:grid;grid-template-columns:120px 1fr 80px;
+  align-items:start;gap:22px;
+  padding:24px 28px 24px 72px;
+  border-bottom:1px solid var(--rule);
+  transition:background .2s;position:relative;
+}
+.nb-row:last-child{border-bottom:none}
+.nb-row:hover{background:rgba(186,117,23,.04)}
+.nb-n{position:absolute;left:16px;top:26px;font-family:var(--fd);font-size:.82rem;color:var(--amber);opacity:.44}
+.nb-tag{font-family:var(--fm);font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding-top:4px}
+.nb-tag.a{color:var(--amber)}.nb-tag.s{color:var(--sage)}.nb-tag.t{color:var(--terra)}
+.nb-main h4{font-family:var(--fd);font-size:1.38rem;font-weight:500;color:var(--ink);line-height:1.3}
+.nb-main p{font-size:.98rem;color:var(--ink-l);margin-top:4px;line-height:1.55}
+.nb-why{font-family:var(--fm);font-size:12px;letter-spacing:.07em;margin-top:10px;line-height:1.65;padding:7px 12px;border-left:2px solid;display:block}
+.nb-why.a{color:var(--amber);border-color:var(--amber);background:rgba(186,117,23,.06)}
+.nb-why.s{color:var(--sage);border-color:var(--sage);background:rgba(107,138,78,.06)}
+.nb-why.t{color:var(--terra);border-color:var(--terra);background:rgba(196,98,45,.06)}
+.nb-time{font-family:var(--fm);font-size:13px;letter-spacing:.1em;color:var(--ink-l);text-align:right;padding-top:4px}
+
+/* ─── PLANS ─── */
+.plans-outer{padding:88px 52px;background:var(--paper-warm)}
+.plans-inner{max-width:1080px;margin:0 auto}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid rgba(186,117,23,.3)}
+.plan{padding:56px 48px;position:relative;border-right:1px solid rgba(186,117,23,.2);transition:transform .25s}
+.plan:last-child{border-right:none;background:var(--ink)}
+.plan:hover{transform:translateY(-4px)}
+.plan-badge{font-family:var(--fm);font-size:11px;letter-spacing:.24em;text-transform:uppercase;background:var(--amber);color:var(--paper);padding:5px 16px;display:inline-block;margin-bottom:26px}
+.pname{font-family:var(--fd);font-size:3rem;font-weight:600;color:var(--ink);display:block;margin-bottom:6px}
+.plan:last-child .pname{color:var(--paper)}
+.pfreq{font-family:var(--fm);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:28px}
+.ppr{display:flex;align-items:baseline;gap:6px;margin-bottom:10px}
+.pamt{font-family:var(--fd);font-size:4.5rem;font-weight:300;color:var(--ink);line-height:1}
+.plan:last-child .pamt{color:var(--paper)}
+.pper{font-size:1.05rem;color:var(--ink-l)}
+.plan:last-child .pper{color:rgba(245,240,232,.5)}
+.plan-value{font-family:var(--fm);font-size:13px;letter-spacing:.1em;color:var(--amber);margin-bottom:32px;line-height:1.65}
+.pfeats{list-style:none;margin-bottom:32px}
+.pfeats li{padding:12px 0;border-bottom:1px solid var(--rule);font-size:1.02rem;color:var(--ink-m);display:flex;gap:13px;align-items:flex-start;line-height:1.5}
+.plan:last-child .pfeats li{color:rgba(245,240,232,.68);border-bottom-color:rgba(186,117,23,.14)}
+.pfeats li::before{content:'—';color:var(--amber);font-family:var(--fd);flex-shrink:0}
+.phl{background:rgba(186,117,23,.1);border-left:3px solid var(--amber);padding:14px 18px;margin-bottom:40px;font-family:var(--fm);font-size:13px;letter-spacing:.06em;color:var(--amber);line-height:1.7}
+.plan:last-child .phl{background:rgba(186,117,23,.14)}
+.pcta{display:block;text-align:center;font-family:var(--fm);font-size:14px;letter-spacing:.13em;padding:18px;text-decoration:none;transition:all .22s}
+.pcta.ol{border:1px solid var(--ink);color:var(--ink)}
+.pcta.ol:hover{background:var(--ink);color:var(--paper)}
+.pcta.fi{background:var(--amber);color:var(--paper);border:1px solid var(--amber)}
+.pcta.fi:hover{background:var(--amber-d);transform:translateY(-1px);box-shadow:0 6px 18px rgba(186,117,23,.32)}
+
+/* ─── OBJECTIONS ─── */
+.obj-strip{background:var(--ink);padding:52px}
+.obj-in{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(186,117,23,.18)}
+.obj{background:var(--ink);padding:36px 32px}
+.obj-q{font-family:var(--fd);font-size:1.4rem;font-style:italic;color:rgba(245,240,232,.5);margin-bottom:14px;line-height:1.35}
+.obj-a{font-size:1.02rem;color:rgba(245,240,232,.7);line-height:1.8}
+.obj-a strong{color:var(--amber-l);font-weight:500}
+
+/* ─── SUBSCRIBE ─── */
+.sub{background:var(--amber);padding:108px 52px;text-align:center;position:relative;overflow:hidden}
+.sub::before{content:'WRITE.';position:absolute;font-family:var(--fd);font-size:22vw;font-weight:700;color:rgba(139,82,16,.12);top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;user-select:none;line-height:1}
+.sub-in{position:relative;z-index:2}
+.sub .chip{color:rgba(245,240,232,.6)}
+.sub h2{font-family:var(--fd);font-size:clamp(2.6rem,6vw,5rem);font-weight:500;color:var(--paper);line-height:1.12;margin-bottom:16px}
+.sub-p{font-size:1.2rem;color:rgba(245,240,232,.72);font-style:italic;margin-bottom:50px}
+.sub-form{display:flex;max-width:520px;margin:0 auto 18px}
+.sub-form input[type=email]{flex:1;padding:20px 24px;border:none;background:var(--paper);color:var(--ink);font-family:var(--fb);font-size:1.05rem;outline:none}
+.sub-form input::placeholder{color:var(--ink-l);opacity:.6}
+.sub-form button{font-family:var(--fm);font-size:14px;letter-spacing:.1em;background:var(--ink);color:var(--paper);border:none;padding:20px 30px;cursor:pointer;transition:background .2s;white-space:nowrap}
+.sub-form button:hover{background:#1a1508}
+.sub-note{font-family:var(--fm);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.48)}
+
+/* ─── FOOTER ─── */
+footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);flex-wrap:wrap;gap:14px}
+.foot-brand{font-family:var(--fd);font-size:1.3rem;font-weight:500}
+.foot-copy{font-family:var(--fm);font-size:13px;letter-spacing:.13em;color:var(--ink-l)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;padding:110px 36px 70px;gap:60px}
+  .hero::after{display:none}
+  .hero-l{padding-right:0}
+  .hero-r{order:-1}
+  .card-scene{width:320px}
+}
+@media(max-width:900px){
+  nav{padding:16px 24px}
+  .nav-r .nav-link{display:none}
+  .proof-bar{grid-template-columns:repeat(2,1fr)}
+  .fww{padding:70px 28px}.fww-in{grid-template-columns:1fr;gap:48px}
+  .method-grid{grid-template-columns:1fr}
+  .mc{border-right:none;border-bottom:1px solid rgba(186,117,23,.18)}
+  .mc:last-child{border-bottom:none}
+  .dark{padding:70px 28px}.dark-in{grid-template-columns:1fr;gap:48px}
+  .sample{padding:70px 28px}
+  .nb-row{grid-template-columns:1fr;gap:4px;padding:18px 18px 18px 62px}
+  .nb-time{text-align:left}
+  .plans-outer{padding:70px 28px}.plans-grid{grid-template-columns:1fr}
+  .plan{border-right:none;border-bottom:1px solid rgba(186,117,23,.2);padding:46px 36px}
+  .plan:last-child{border-bottom:none}.plan:hover{transform:none}
+  .obj-strip{padding:48px 28px}.obj-in{grid-template-columns:1fr}
+  .wrap{padding:70px 28px}
+  .sub{padding:80px 28px}.sub-form{flex-direction:column}
+  footer{flex-direction:column;text-align:center;padding:32px 24px}
+  .sec-head p{max-width:100%}
+}
+@media(max-width:480px){
+  .hero{padding:100px 22px 60px}
+  .card-scene{width:280px}
+  .pb-n{font-size:2.6rem}
+}
+</style>
+</head>
+<body>
+<canvas id="grain"></canvas>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a href="#top" class="nav-logo">
+    <!-- Exact logo from writingfuel.svg — keep both files in same folder -->
+    <img src="writingfuel.svg" alt="Writing Fuel logo"/>
+    <span class="nav-wordmark">Writing Fuel</span>
+  </a>
+  <div class="nav-r">
+    <a href="#method" class="nav-link">The Method</a>
+    <a href="#plans"  class="nav-link">Plans</a>
+    <a href="#subscribe" class="nav-cta">Start Free</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="top">
+  <div class="hero-l">
+    <div class="eyebrow" id="eyebrow">Ray Bradbury's reading method &mdash; in your inbox</div>
+
+    <!-- Two explicit lines, each animated as a block — clean and predictable -->
+    <h1 class="hero-title">
+      <span class="ht-line" id="ht1">Your writing is only</span>
+      <span class="ht-line" id="ht2">as good as what you</span>
+      <span class="ht-line" id="ht3"><em>put into it.</em></span>
+    </h1>
+
+    <div class="hero-proof" id="hero-proof">
+      <div class="proof-bar-line"></div>
+      <span class="proof-text">Bradbury read every morning &mdash; then wrote <em>600+ works</em> in 50 years</span>
+    </div>
+
+    <p class="hero-desc" id="hero-desc">
+      Every morning, Ray Bradbury sat down with a poem, a short story, and an essay before writing a word. He called it feeding the muse. We curate that same three-piece practice and deliver it to your inbox. <strong>Zero hunting. Just reading.</strong>
+    </p>
+
+    <div class="hero-verdict" id="hero-verdict">
+      <div class="vhalf bad">
+        <span class="vlabel bad">Most writers</span>
+        <div class="vval">Read nothing.<br>Wonder why they're stuck.</div>
+      </div>
+      <div class="vhalf good">
+        <span class="vlabel good">Writing Fuel subscribers</span>
+        <div class="vval good">Read daily.<br>Write from a full tank.</div>
+      </div>
+    </div>
+
+    <div class="hero-btns" id="hero-btns">
+      <a href="#subscribe" class="btn-dark">Start Reading Free</a>
+      <a href="#plans" class="btn-out">See All Plans</a>
+    </div>
+
+    <div class="tagline" id="tagline">
+      <span class="tagline-inner">Read more. Write better.
+        <svg class="tagline-svg" id="tagline-svg" viewBox="0 0 230 12" fill="none">
+          <path d="M3 8 Q35 2,65 7 Q98 13,130 6 Q162 1,194 7 Q210 10,228 8" stroke="#BA7517" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <!-- Floating card -->
+  <div class="hero-r" id="hero-r">
+    <div class="card-scene">
+      <div class="card-shadow"></div>
+      <div class="doodle d-coffee" id="d1">
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="29" stroke="#6B3A1F" stroke-width="3" stroke-dasharray="5 3.5" opacity=".18"/>
+          <circle cx="36" cy="36" r="25" stroke="#6B3A1F" stroke-width="1.5" opacity=".11"/>
+          <circle cx="36" cy="36" r="32" stroke="#6B3A1F" stroke-width="1" stroke-dasharray="1 6" opacity=".07"/>
+        </svg>
+      </div>
+      <div class="doodle d-quill" id="d2">
+        <svg width="82" height="82" viewBox="0 0 82 82" fill="none">
+          <path d="M70 7 C62 16,21 30,9 70" stroke="#BA7517" stroke-width="1.7" stroke-linecap="round" opacity=".44"/>
+          <path d="M70 7 C74 3,76 7,73 13 C69 22,42 34,28 54 C20 65,13 70,9 70" stroke="#BA7517" stroke-width="1" opacity=".24" fill="none"/>
+          <path d="M28 17 L22 15M24 23 L18 21M20 29 L14 27" stroke="#BA7517" stroke-width=".9" opacity=".28" stroke-linecap="round"/>
+          <path d="M9 70 L7 79 L14 73 Z" fill="#BA7517" opacity=".34"/>
+        </svg>
+      </div>
+      <div class="doodle d-dots" id="d3">
+        <svg width="44" height="84" viewBox="0 0 44 84" fill="none">
+          <circle cx="9" cy="12" r="2.2" fill="#BA7517" opacity=".17"/>
+          <circle cx="30" cy="5" r="1.6" fill="#BA7517" opacity=".12"/>
+          <circle cx="17" cy="35" r="2.8" fill="#2C2416" opacity=".09"/>
+          <circle cx="6" cy="52" r="1.6" fill="#BA7517" opacity=".15"/>
+          <circle cx="34" cy="62" r="2.2" fill="#BA7517" opacity=".1"/>
+          <circle cx="15" cy="74" r="1.1" fill="#2C2416" opacity=".11"/>
+        </svg>
+      </div>
+      <div class="doodle d-arrow" id="d4">
+        <svg width="96" height="52" viewBox="0 0 96 52" fill="none">
+          <path d="M10 44 Q32 21,75 13" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3" opacity=".38"/>
+          <path d="M68 8 L78 15 L65 19" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".38" fill="none"/>
+          <text x="2" y="50" font-family="Special Elite,monospace" font-size="9.5" fill="#BA7517" opacity=".44" transform="rotate(-8 2 50)">today's issue</text>
+        </svg>
+      </div>
+      <div class="issue-card">
+        <div class="card-top">
+          <span class="card-brand">&#10022; Writing Fuel</span>
+          <div class="card-meta">Tuesday<br>Issue No. 023</div>
+        </div>
+        <div class="card-row">
+          <div class="cr-dot a"></div>
+          <span class="cr-tag">Poem</span>
+          <div><div class="cr-t">The Road Not Taken</div><div class="cr-m">Robert Frost &middot; 2 min</div></div>
+        </div>
+        <div class="card-row">
+          <div class="cr-dot s"></div>
+          <span class="cr-tag">Story</span>
+          <div><div class="cr-t">The Necklace</div><div class="cr-m">G. de Maupassant &middot; 12 min</div></div>
+        </div>
+        <div class="card-row">
+          <div class="cr-dot t"></div>
+          <span class="cr-tag">Article</span>
+          <div><div class="cr-t">The Philosophy of Tyranny</div><div class="cr-m">Nautilus &middot; 15 min</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="mi">Poetry</span><span class="ms a">&#10022;</span>
+    <span class="mi">Short Fiction</span><span class="ms s">&#10022;</span>
+    <span class="mi">History &amp; Ideas</span><span class="ms t">&#10022;</span>
+    <span class="mi">Daily Practice</span><span class="ms a">&#10022;</span>
+    <span class="mi">Science &amp; Nature</span><span class="ms s">&#10022;</span>
+    <span class="mi">Classic Literature</span><span class="ms t">&#10022;</span>
+    <span class="mi">Philosophy</span><span class="ms a">&#10022;</span>
+    <span class="mi">The Bradbury Method</span><span class="ms s">&#10022;</span>
+    <span class="mi">Poetry</span><span class="ms a">&#10022;</span>
+    <span class="mi">Short Fiction</span><span class="ms s">&#10022;</span>
+    <span class="mi">History &amp; Ideas</span><span class="ms t">&#10022;</span>
+    <span class="mi">Daily Practice</span><span class="ms a">&#10022;</span>
+    <span class="mi">Science &amp; Nature</span><span class="ms s">&#10022;</span>
+    <span class="mi">Classic Literature</span><span class="ms t">&#10022;</span>
+    <span class="mi">Philosophy</span><span class="ms a">&#10022;</span>
+    <span class="mi">The Bradbury Method</span><span class="ms s">&#10022;</span>
+  </div>
+</div>
+
+<!-- ══ PROOF BAR ══ -->
+<div class="proof-bar" id="stats">
+  <div class="pb-cell"><div class="pb-n" data-target="600" data-suffix="+">0</div><div class="pb-l">Works Bradbury produced</div></div>
+  <div class="pb-cell"><div class="pb-n" data-target="3">0</div><div class="pb-l">Reads per issue</div></div>
+  <div class="pb-cell"><div class="pb-n" data-target="30" data-prefix="~">0</div><div class="pb-l">Minutes a day</div></div>
+  <div class="pb-cell"><div class="pb-n" data-target="0">0</div><div class="pb-l">Cost to start</div></div>
+</div>
+
+<!-- ══ PALETTE STRIP ══ -->
+<div class="palette-strip">
+  <div class="palette-in">
+    <div class="swatch"><div class="sw-dot" style="background:#BA7517"></div><span class="sw-label">Poem</span></div>
+    <div class="swatch"><div class="sw-dot" style="background:#6B8A4E"></div><span class="sw-label">Short Story</span></div>
+    <div class="swatch"><div class="sw-dot" style="background:#C4622D"></div><span class="sw-label">Article</span></div>
+    <span class="palette-sep">&mdash; One of each. Every issue. &mdash;</span>
+  </div>
+</div>
+
+<!-- ══ FOR WRITERS WHO ══ -->
+<div class="fww">
+  <div class="fww-in">
+    <div class="fww-left reveal">
+      <svg width="48" height="60" viewBox="0 0 48 60" fill="none" style="margin-bottom:22px;opacity:.48">
+        <rect x="12" y="16" width="24" height="38" rx="3" stroke="#BA7517" stroke-width="1.5"/>
+        <path d="M12 26 L36 26" stroke="#BA7517" stroke-width="1" opacity=".4"/>
+        <rect x="17" y="8" width="14" height="10" rx="1.5" stroke="#BA7517" stroke-width="1.4"/>
+        <path d="M21 4 L27 4 L27 8 L21 8" stroke="#BA7517" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M24 56 Q23 59 24 60 Q25 59 24 56 Z" fill="#BA7517" opacity=".4"/>
+      </svg>
+      <span class="chip">Who this is for</span>
+      <h2>You know you should<br>read more.<br><em>You just never do.</em></h2>
+      <p>It's not laziness. It's friction. Finding a poem worth reading takes 20 minutes. Hunting for a good story takes longer. By the time you've chosen, the urge to read is gone.</p>
+      <p><strong>Writing Fuel removes that friction entirely.</strong> Three pieces, curated and waiting in your inbox. Open, read, close. That's the whole system.</p>
+      <div class="fww-not">
+        <p>&#10006; &nbsp;Not for people who want writing tips or listicles. This is for writers who believe &mdash; like Bradbury did &mdash; that reading <em>is</em> the practice.</p>
+      </div>
+    </div>
+    <div class="fww-right reveal">
+      <div class="fww-item">
+        <div class="fww-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5 L4.2 7.5 L8 2.5" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="fww-item-t">Writers who feel stuck or creatively dry</div><div class="fww-item-d">When the tank is empty, nothing comes out. Daily reading refills it &mdash; reliably, quietly, without effort.</div></div>
+      </div>
+      <div class="fww-item">
+        <div class="fww-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5 L4.2 7.5 L8 2.5" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="fww-item-t">Writers who want voice, not just output</div><div class="fww-item-d">Rhythm, structure, surprise &mdash; those come from deep reading. This is the long game.</div></div>
+      </div>
+      <div class="fww-item">
+        <div class="fww-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5 L4.2 7.5 L8 2.5" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="fww-item-t">Writers who want wide, unexpected references</div><div class="fww-item-d">Articles from history, science, philosophy, culture. Your writing becomes richer when your mind is wider than the page.</div></div>
+      </div>
+      <div class="fww-item">
+        <div class="fww-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5 L4.2 7.5 L8 2.5" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="fww-item-t">Writers who can't build a consistent reading habit</div><div class="fww-item-d">When it's curated and delivered, the habit builds itself. Lower the bar and the bar gets crossed.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ METHOD ══ -->
+<div class="wrap" id="method">
+  <!-- Centered, stacked section header — no split layout -->
+  <div class="sec-head reveal">
+    <span class="chip">The Three-Piece Practice</span>
+    <h2>Three things that change<br>how you write.</h2>
+    <p>Not tips. Not frameworks. Literature and ideas &mdash; delivered daily, in the exact order Bradbury used it.</p>
+  </div>
+
+  <div class="method-grid">
+    <div class="mc reveal">
+      <span class="mc-num">I</span>
+      <svg class="mc-icon" width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <path d="M42 5 C38 9,15 21,8 46" stroke="#BA7517" stroke-width="2" stroke-linecap="round"/>
+        <path d="M42 5 C46 2,48 5,45 11 C41 20,20 32,13 45" stroke="#BA7517" stroke-width="1.1" opacity=".34" fill="none"/>
+        <path d="M30 18 L24 16M26 24 L20 22M22 30 L16 28" stroke="#BA7517" stroke-width=".9" opacity=".28" stroke-linecap="round"/>
+        <circle cx="8" cy="46" r="1.8" fill="#BA7517"/>
+      </svg>
+      <div class="mc-pill" style="width:48px;background:#BA7517;opacity:.7"></div>
+      <h3>One Poem</h3>
+      <span class="mc-outcome" style="color:var(--amber)">Train your ear</span>
+      <p>Most writers have a tin ear and don't know it. A poem a day fixes that. Five minutes of compressed, musical language recalibrates your sensitivity to word choice, rhythm, and the sound inside sentences.</p>
+      <div class="mc-time"><span>~2&ndash;5 min</span><div class="tc" style="width:22px;background:#BA7517"></div></div>
+    </div>
+    <div class="mc reveal">
+      <span class="mc-num">II</span>
+      <svg class="mc-icon" width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <path d="M26 10 L26 44" stroke="#6B8A4E" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M26 10 C20 9,11 10,6 13 L6 44 C11 41,20 40,26 43 Z" stroke="#6B8A4E" stroke-width="1.5" stroke-linejoin="round" fill="rgba(107,138,78,.07)"/>
+        <path d="M26 10 C32 9,41 10,46 13 L46 44 C41 41,32 40,26 43 Z" stroke="#6B8A4E" stroke-width="1.5" stroke-linejoin="round" fill="rgba(107,138,78,.07)"/>
+        <line x1="11" y1="19" x2="23" y2="18.5" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+        <line x1="11" y1="23" x2="23" y2="22.5" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+        <line x1="11" y1="27" x2="23" y2="26.5" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+        <line x1="29" y1="18.5" x2="41" y2="19" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+        <line x1="29" y1="22.5" x2="41" y2="23" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+        <line x1="29" y1="26.5" x2="41" y2="27" stroke="#6B8A4E" stroke-width=".8" opacity=".32"/>
+      </svg>
+      <div class="mc-pill" style="width:60px;background:#6B8A4E;opacity:.7"></div>
+      <h3>One Short Story</h3>
+      <span class="mc-outcome" style="color:var(--sage)">Absorb structure</span>
+      <p>You can't write what you haven't read. Short stories are masterclasses: how does an opening hook? How does voice form? You absorb structure and timing without studying it. It seeps in &mdash; and comes back out when you write.</p>
+      <div class="mc-time"><span>~10&ndash;20 min</span><div class="tc" style="width:52px;background:#6B8A4E"></div></div>
+    </div>
+    <div class="mc reveal">
+      <span class="mc-num">III</span>
+      <svg class="mc-icon" width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="24" r="18" stroke="#C4622D" stroke-width="1.5" fill="rgba(196,98,45,.05)"/>
+        <path d="M8 24 Q26 18 44 24" stroke="#C4622D" stroke-width=".8" opacity=".32" fill="none"/>
+        <path d="M10 17 Q26 13 42 17" stroke="#C4622D" stroke-width=".7" opacity=".22" fill="none"/>
+        <path d="M10 31 Q26 35 42 31" stroke="#C4622D" stroke-width=".7" opacity=".22" fill="none"/>
+        <path d="M26 6 Q32 24 26 42" stroke="#C4622D" stroke-width=".8" opacity=".28" fill="none"/>
+        <circle cx="36" cy="36" r="8" stroke="#C4622D" stroke-width="1.4" fill="none"/>
+        <line x1="42" y1="42" x2="48" y2="48" stroke="#C4622D" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <div class="mc-pill" style="width:40px;background:#C4622D;opacity:.7"></div>
+      <h3>One Article</h3>
+      <span class="mc-outcome" style="color:var(--terra)">Widen your world</span>
+      <p>Not writing craft. Not industry news. Ideas from <em>everywhere</em> &mdash; history magazines, science journals, philosophy sites, culture blogs. The kind of reading that makes you think differently, then write differently.</p>
+      <div class="mc-time"><span>~8&ndash;15 min</span><div class="tc" style="width:40px;background:#C4622D"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DARK BAND ══ -->
+<div class="dark">
+  <div class="dark-in">
+    <div class="reveal">
+      <span class="chip">The proof</span>
+      <p class="dq">&ldquo;You must stay drunk on writing so reality cannot destroy you.&rdquo;</p>
+      <span class="dqa">&mdash; Ray Bradbury</span>
+      <div class="rvis" id="rvis">
+        <span class="rvis-label" style="margin-top:36px">30 minutes. Three habits.</span>
+        <div class="rrow"><span class="rlbl a">Poem</span><div class="rtrack"><div class="rbar a" data-w="22"></div></div><span class="rdur">2&ndash;5 min</span></div>
+        <div class="rrow"><span class="rlbl s">Short Story</span><div class="rtrack"><div class="rbar s" data-w="68"></div></div><span class="rdur">10&ndash;20 min</span></div>
+        <div class="rrow"><span class="rlbl t">Article</span><div class="rtrack"><div class="rbar t" data-w="52"></div></div><span class="rdur">8&ndash;15 min</span></div>
+      </div>
+    </div>
+    <div class="dark-r reveal">
+      <span class="chip">The honest pitch</span>
+      <p>Most writers sit down to write and find the tank empty. No images. No language. No rhythm. Then they blame writer&rsquo;s block, or the chair, or the time of day.</p>
+      <p>It&rsquo;s none of those things. <strong>Output is downstream of input.</strong> You cannot pull from a well you never filled. Bradbury knew this. He read every single morning for decades, without exception.</p>
+      <p>Writing Fuel is the simplest version of that habit. <strong>We find it. We curate it. You read it.</strong> Thirty minutes. Every morning.</p>
+      <div class="how">
+        <span class="chip" style="margin-bottom:18px;display:block">How it works</span>
+        <div class="how-step"><span class="hs-n">1</span><span class="hs-t">Subscribe free &mdash; <em>takes 30 seconds</em></span></div>
+        <div class="how-div"></div>
+        <div class="how-step"><span class="hs-n">2</span><span class="hs-t">Issue arrives in your inbox on schedule</span></div>
+        <div class="how-div"></div>
+        <div class="how-step"><span class="hs-n">3</span><span class="hs-t">Open it. Read it. Write from a full tank.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SAMPLE ══ -->
+<div class="sample">
+  <div class="sample-in reveal">
+    <!-- Centered section header -->
+    <div class="sec-head" style="margin-bottom:42px">
+      <span class="chip">Sample Issue</span>
+      <h2>This is what shows up.</h2>
+      <p>Three pieces, an editor&rsquo;s note on why each was chosen, and nothing else. No ads, no filler.</p>
+    </div>
+    <div class="notebook">
+      <div class="nb-head">
+        <span class="nb-head-t">&#10022; Writing Fuel &mdash; Issue No. 023</span>
+        <span class="nb-head-d">Tuesday &middot; The Practice</span>
+      </div>
+      <div>
+        <div class="nb-row">
+          <span class="nb-n">01</span>
+          <span class="nb-tag a">Poem</span>
+          <div class="nb-main">
+            <h4>&ldquo;The Road Not Taken&rdquo;</h4>
+            <p>Robert Frost &middot; One of the most misread poems in English. Frost is doing something far stranger than the motivational poster suggests.</p>
+            <span class="nb-why a">Why this one: A lesson in how identical words can carry two completely opposite meanings at once.</span>
+          </div>
+          <span class="nb-time">~2 min</span>
+        </div>
+        <div class="nb-row">
+          <span class="nb-n">02</span>
+          <span class="nb-tag s">Short Story</span>
+          <div class="nb-main">
+            <h4>&ldquo;The Necklace&rdquo;</h4>
+            <p>Guy de Maupassant &middot; Irony, consequence, a life ruined by a borrowed object &mdash; and one of literature&rsquo;s most devastating final lines.</p>
+            <span class="nb-why s">Why this one: A masterclass in the slow build and the gut-punch ending. Notice how Maupassant never editorializes.</span>
+          </div>
+          <span class="nb-time">~12 min</span>
+        </div>
+        <div class="nb-row">
+          <span class="nb-n">03</span>
+          <span class="nb-tag t">Article</span>
+          <div class="nb-main">
+            <h4>The Philosophy of Tyranny</h4>
+            <p>Nautilus &middot; What ancient thinkers understood about power that we keep forgetting. History, philosophy, a mirror to the present.</p>
+            <span class="nb-why t">Why this one: Not about writing at all &mdash; which is exactly why it&rsquo;s here. Unexpected ideas make for unexpected prose.</span>
+          </div>
+          <span class="nb-time">~15 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLANS ══ -->
+<div class="plans-outer" id="plans">
+  <div class="plans-inner">
+    <!-- Centered section header -->
+    <div class="sec-head reveal">
+      <span class="chip">Choose Your Practice</span>
+      <h2>Find your frequency.</h2>
+      <p>Start free. No card. No commitment. Upgrade when you want more.</p>
+    </div>
+    <div class="plans-grid reveal">
+      <div class="plan">
+        <svg width="44" height="32" viewBox="0 0 44 32" fill="none" style="margin-bottom:22px;opacity:.44">
+          <rect x="2" y="18" width="36" height="12" rx="1.5" stroke="#BA7517" stroke-width="1.2" fill="none"/>
+          <rect x="5" y="11" width="36" height="12" rx="1.5" stroke="#BA7517" stroke-width="1.2" fill="none"/>
+          <rect x="8" y="4"  width="36" height="12" rx="1.5" stroke="#BA7517" stroke-width="1.2" fill="none"/>
+        </svg>
+        <span class="pname">The Practice</span>
+        <span class="pfreq">Mon &middot; Wed &middot; Fri</span>
+        <div class="ppr"><span class="pamt">Free</span></div>
+        <div class="plan-value">Forever free &mdash; no card required</div>
+        <ul class="pfeats">
+          <li>Three curated issues per week</li>
+          <li>One poem, one story, one article per issue</li>
+          <li>Public domain classics &amp; hand-picked reads</li>
+          <li>Editor&rsquo;s note on why each piece was chosen</li>
+        </ul>
+        <a href="#subscribe" class="pcta ol">Start Reading Free &rarr;</a>
+      </div>
+      <div class="plan">
+        <div class="plan-badge">Full Bradbury Practice</div>
+        <span class="pname">Daily Fuel</span>
+        <span class="pfreq">Every single day</span>
+        <div class="ppr"><span class="pamt">$5</span><span class="pper">/ month</span></div>
+        <div class="plan-value">Less than one coffee &mdash; 365 curated issues a year</div>
+        <ul class="pfeats">
+          <li>Daily issues &mdash; 7 days a week, no gaps</li>
+          <li>Full poem + story + article every morning</li>
+          <li>Articles from history, science, philosophy &amp; beyond</li>
+          <li>Deeper craft notes &amp; reading context</li>
+        </ul>
+        <div class="phl">&#10022; &nbsp;Weekly Bradbury-style short story prompt &mdash; so you don&rsquo;t just read the method, you <em>practice</em> it.</div>
+        <a href="https://www.patreon.com/cw/WritingFuel" target="_blank" rel="noopener" class="pcta fi">Join Us &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OBJECTIONS ══ -->
+<div class="obj-strip">
+  <div class="obj-in reveal">
+    <div class="obj">
+      <svg width="26" height="20" viewBox="0 0 26 20" fill="none" style="margin-bottom:12px;opacity:.28">
+        <path d="M2 2 Q2 1 3 1 L23 1 Q24 1 24 2 L24 14 Q24 15 23 15 L9 15 L5 20 L5 15 L3 15 Q2 15 2 14 Z" stroke="#F5F0E8" stroke-width="1.2" fill="none"/>
+      </svg>
+      <div class="obj-q">&ldquo;I already get too many emails.&rdquo;</div>
+      <div class="obj-a">This isn&rsquo;t content marketing. <strong>It&rsquo;s three pieces of literature.</strong> No ads, no hot takes. Open it, read it, close it. Probably the best three minutes your inbox has ever seen.</div>
+    </div>
+    <div class="obj">
+      <svg width="26" height="20" viewBox="0 0 26 20" fill="none" style="margin-bottom:12px;opacity:.28">
+        <path d="M2 2 Q2 1 3 1 L23 1 Q24 1 24 2 L24 14 Q24 15 23 15 L9 15 L5 20 L5 15 L3 15 Q2 15 2 14 Z" stroke="#F5F0E8" stroke-width="1.2" fill="none"/>
+      </svg>
+      <div class="obj-q">&ldquo;I know what I want to read.&rdquo;</div>
+      <div class="obj-a">Do you read it, though? <strong>Knowing and doing are different things.</strong> The writers we admire had consistent daily habits &mdash; not just intentions and a long reading list.</div>
+    </div>
+    <div class="obj">
+      <svg width="26" height="20" viewBox="0 0 26 20" fill="none" style="margin-bottom:12px;opacity:.28">
+        <path d="M2 2 Q2 1 3 1 L23 1 Q24 1 24 2 L24 14 Q24 15 23 15 L9 15 L5 20 L5 15 L3 15 Q2 15 2 14 Z" stroke="#F5F0E8" stroke-width="1.2" fill="none"/>
+      </svg>
+      <div class="obj-q">&ldquo;Will this actually help?&rdquo;</div>
+      <div class="obj-a">We can&rsquo;t promise results. <strong>We can promise this:</strong> Bradbury swore by it. Every great writer reads obsessively. Output is downstream of input. Always has been.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUBSCRIBE ══ -->
+<div class="sub" id="subscribe">
+  <div class="sub-in reveal">
+    <svg width="56" height="42" viewBox="0 0 56 42" fill="none" style="margin:0 auto 28px;display:block;opacity:.32">
+      <path d="M28 6 L28 37" stroke="rgba(245,240,232,.8)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M28 6 C22 5,12 6,6 9 L6 37 C12 34,22 33,28 36 Z" stroke="rgba(245,240,232,.8)" stroke-width="1.5" stroke-linejoin="round" fill="rgba(245,240,232,.07)"/>
+      <path d="M28 6 C34 5,44 6,50 9 L50 37 C44 34,34 33,28 36 Z" stroke="rgba(245,240,232,.8)" stroke-width="1.5" stroke-linejoin="round" fill="rgba(245,240,232,.07)"/>
+    </svg>
+    <span class="chip">Free &mdash; The Practice</span>
+    <h2>The tank is empty.<br>Fill it.</h2>
+    <p class="sub-p">Start with three reads a week. It costs nothing. It might change everything.</p>
+    <iframe src="https://subscribe-forms.beehiiv.com/e1959f3b-0125-481a-828a-41360ec1a48b" class="beehiiv-embed" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="width:948px;height:315px;margin:0 auto;display:block;border-radius:0 !important;background-color:transparent;box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1),0 2px 4px -2px rgb(0 0 0 / 0.1);max-width:100%;"></iframe>
+    <p class="sub-note">Free forever &nbsp;&middot;&nbsp; 3 issues / week &nbsp;&middot;&nbsp; No spam &nbsp;&middot;&nbsp; Unsubscribe anytime</p>
+  </div>
+</div>
+
+<footer>
+  <span class="foot-brand">Writing Fuel</span>
+  <span class="foot-copy">&copy; 2025 Writing Fuel &nbsp;&middot;&nbsp; Read more. Write better.</span>
+</footer>
+
+<script>
+// GRAIN
+(function(){
+  var c=document.getElementById('grain'),ctx=c.getContext('2d'),w,h;
+  function resize(){c.width=w=innerWidth;c.height=h=innerHeight}
+  function draw(){
+    var img=ctx.createImageData(w,h),d=img.data;
+    for(var i=0;i<d.length;i+=4){var v=Math.random()*255|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}
+    ctx.putImageData(img,0,0);requestAnimationFrame(draw);
+  }
+  resize();window.addEventListener('resize',resize);draw();
+})();
+
+// NAV
+window.addEventListener('scroll',function(){
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>40);
+},{passive:true});
+
+// GSAP
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero: animate each explicit line block
+gsap.timeline({delay:.15})
+  .to('#eyebrow',  {opacity:1,y:0,duration:.6,ease:'power2.out'})
+  .to('#ht1',      {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.2')
+  .to('#ht2',      {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.35')
+  .to('#ht3',      {opacity:1,y:0,duration:.55,ease:'power3.out'},'-=.35')
+  .to('#hero-proof',{opacity:1,y:0,duration:.55,ease:'power2.out'},'-=.25')
+  .to('#hero-desc', {opacity:1,y:0,duration:.6,ease:'power2.out'},'-=.38')
+  .to('#hero-verdict',{opacity:1,y:0,duration:.6,ease:'power2.out'},'-=.4')
+  .to('#hero-btns', {opacity:1,y:0,duration:.6,ease:'power2.out'},'-=.4')
+  .to('#tagline',   {opacity:1,y:0,duration:.5,ease:'power2.out'},'-=.35')
+  .add(function(){document.getElementById('tagline-svg').classList.add('drawn')},'-=.15')
+  .to('#hero-r',    {opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.75')
+  .to(['#d1','#d2','#d3','#d4'],{opacity:1,y:0,duration:.5,ease:'power2.out',stagger:.1},'-=.5');
+
+// Scroll reveals
+gsap.utils.toArray('.reveal').forEach(function(el){
+  gsap.to(el,{opacity:1,y:0,duration:.8,ease:'power2.out',
+    scrollTrigger:{trigger:el,start:'top 86%',once:true}});
+});
+
+// Method cards stagger
+gsap.utils.toArray('.mc').forEach(function(el,i){
+  gsap.to(el,{opacity:1,y:0,duration:.7,ease:'power2.out',delay:i*.11,
+    scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+});
+
+// fww items
+gsap.utils.toArray('.fww-item').forEach(function(el,i){
+  gsap.from(el,{opacity:0,x:18,duration:.6,ease:'power2.out',delay:i*.09,
+    scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+});
+
+// Stat counters
+(function(){
+  var done=false,s=document.getElementById('stats');
+  if(!s)return;
+  new IntersectionObserver(function(entries){
+    if(done||!entries[0].isIntersecting)return;
+    done=true;
+    document.querySelectorAll('.pb-n').forEach(function(el){
+      var t=+el.dataset.target,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',
+          dur=1600,start=performance.now();
+      if(t===0){el.textContent=pre+'0'+suf;return}
+      (function tick(now){
+        var p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+        el.textContent=pre+Math.round(e*t)+suf;
+        if(p<1)requestAnimationFrame(tick);
+        else el.textContent=pre+t+suf;
+      })(start);
+    });
+  },{threshold:.4}).observe(s);
+})();
+
+// Reading bars
+(function(){
+  var done=false,r=document.getElementById('rvis');
+  if(!r)return;
+  new IntersectionObserver(function(entries){
+    if(done||!entries[0].isIntersecting)return;
+    done=true;
+    document.querySelectorAll('.rbar').forEach(function(b){b.style.width=b.dataset.w+'%'});
+  },{threshold:.3}).observe(r);
+})();
+</script>
+</body>
+</html>
